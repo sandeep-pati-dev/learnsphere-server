@@ -111,3 +111,20 @@ export const myProfile = TryCatch(async (req, res) => {
   const user = await User.findById(req.user._id);
   res.json({ user });
 });
+
+export const applyTutor = TryCatch(async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return res.status(404).json({
+      message: "User not found",
+    });
+  }
+
+  user.role = "admin";
+  await user.save();
+
+  res.status(200).json({
+    message: "Application Approved! You are now a Tutor/Admin.",
+    user,
+  });
+});
