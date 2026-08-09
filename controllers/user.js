@@ -5,6 +5,13 @@ import sendMail from "../middlewares/sendMail.js";
 import TryCatch from "../middlewares/TryCatch.js";
 export const register = TryCatch(async (req, res) => {
   const { name, email, password } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({
+      message: "Please fill all required fields",
+    });
+  }
+
   let user = await User.findOne({ email });
   if (user) {
     return res.status(400).json({
@@ -26,7 +33,7 @@ export const register = TryCatch(async (req, res) => {
     },
     process.env.Activation_Secret,
     {
-      expiresIn: "400d",
+      expiresIn: "15m",
     }
   );
   const data = {
@@ -42,6 +49,13 @@ export const register = TryCatch(async (req, res) => {
 
 export const verifyUser = TryCatch(async (req, res) => {
   const { otp, activationToken } = req.body;
+  
+  if (!otp || !activationToken) {
+    return res.status(400).json({
+      message: "OTP and activation token are required",
+    });
+  }
+
   const verify = jwt.verify(activationToken, process.env.Activation_Secret);
   if (!verify) {
     return res.status(400).json({
@@ -65,6 +79,13 @@ export const verifyUser = TryCatch(async (req, res) => {
 
 export const loginUser = TryCatch(async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({
+      message: "Please enter email and password",
+    });
+  }
+
   const user = await User.findOne({ email });
   if (!user)
     return res.status(400).json({

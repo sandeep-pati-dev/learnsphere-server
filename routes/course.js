@@ -7,6 +7,7 @@ import {
   getMyCourses,
   checkout,
   paymentVerification,
+  updateProgress,
 } from "../controllers/course.js";
 import { isAuth } from "../middlewares/isAuth.js";
 const router = express.Router();
@@ -17,4 +18,5 @@ router.get("/lecture/:id", isAuth, fetchLecture);
 router.get("/myCourse", isAuth, getMyCourses);
 router.post("/course/checkout/:id", isAuth, checkout);
 router.post("/verification/:id", isAuth, paymentVerification);
+router.post("/lecture/:id/progress", isAuth, updateProgress);
 export default router;

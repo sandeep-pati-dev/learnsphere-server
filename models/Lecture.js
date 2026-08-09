@@ -17,6 +17,7 @@ const Schema = mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Courses",
     required: true,
+    index: true,
   },
   createdAt: {
     type: Date,

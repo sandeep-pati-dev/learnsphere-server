@@ -25,6 +25,12 @@ const schema = new mongoose.Schema(
         ref: "Courses",
       },
     ],
+    completedLectures: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Lecture",
+      },
+    ],
   },
   { timestamps: true }
 );

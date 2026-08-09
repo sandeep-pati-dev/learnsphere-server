@@ -1,36 +1,36 @@
 import mongoose from "mongoose";
 
 const schema = new mongoose.Schema({
-  razorpay_order_id: {
+  orderId: {
     type: String,
     required: true,
     unique: true,
-  },
-  razorpay_payment_id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  razorpay_signature: {
-    type: String,
-    required: true,
   },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
-    required: false,
+    required: true,
     index: true,
   },
   course: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Courses",
-    required: false,
+    required: true,
     index: true,
+  },
+  amount: {
+    type: Number,
+    required: true,
+  },
+  status: {
+    type: String,
+    default: "created", // created, verified
   },
   createdAt: {
     type: Date,
     default: Date.now,
+    expires: 3600, // 1 hour TTL
   },
 });
 
-export const Payment = mongoose.model("Payment", schema);
+export const Order = mongoose.model("Order", schema);
