@@ -92,9 +92,14 @@ export const deleteLecture = TryCatch(async (req, res) => {
     if (lecture.video.startsWith("http")) {
       await deleteFromCloudinary(lecture.video, "video");
     } else {
-      rm(lecture.video, () => {
-        console.log("local video deleted");
-      });
+      if (fs.existsSync(lecture.video)) {
+        fs.unlink(lecture.video, (err) => {
+          if (err) console.error("Error deleting local video:", err);
+          else console.log("local video deleted");
+        });
+      } else {
+        console.log("local video file not found on disk, skipping delete");
+      }
     }
   }
 
@@ -106,6 +111,11 @@ const unlinkAsync = promisify(fs.unlink);
 
 export const deleteCourse = TryCatch(async (req, res) => {
   const course = await Courses.findById(req.params.id);
+  if (!course) {
+    return res.status(404).json({
+      message: "Course not found",
+    });
+  }
   const lectures = await Lecture.find({ course: course._id });
 
   await Promise.all(
@@ -115,8 +125,12 @@ export const deleteCourse = TryCatch(async (req, res) => {
           await deleteFromCloudinary(lecture.video, "video");
         } else {
           try {
-            await unlinkAsync(lecture.video);
-            console.log("local video deleted");
+            if (fs.existsSync(lecture.video)) {
+              await unlinkAsync(lecture.video);
+              console.log("local video deleted");
+            } else {
+              console.log("local video file not found on disk, skipping delete");
+            }
           } catch (err) {
             console.error("Error deleting local video:", err);
           }
@@ -129,9 +143,14 @@ export const deleteCourse = TryCatch(async (req, res) => {
     if (course.image.startsWith("http")) {
       await deleteFromCloudinary(course.image, "image");
     } else {
-      rm(course.image, () => {
-        console.log("local image deleted");
-      });
+      if (fs.existsSync(course.image)) {
+        fs.unlink(course.image, (err) => {
+          if (err) console.error("Error deleting local image:", err);
+          else console.log("local image deleted");
+        });
+      } else {
+        console.log("local image file not found on disk, skipping delete");
+      }
     }
   }
 
